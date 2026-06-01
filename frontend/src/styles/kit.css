@@ -108,6 +108,7 @@
 .status-dot.status-normal { background-color: var(--smat-teal); box-shadow: var(--smat-shadow-glow); }
 .status-dot.status-warning { background-color: var(--smat-amber); box-shadow: 0 0 8px var(--smat-amber-muted); }
 .status-dot.status-danger { background-color: var(--smat-coral); box-shadow: var(--smat-shadow-glow-danger); }
+.status-dot.status-offline { background-color: var(--smat-text-muted); box-shadow: none; opacity: 0.5; }
 
 /* Status Text */
 .status-text {

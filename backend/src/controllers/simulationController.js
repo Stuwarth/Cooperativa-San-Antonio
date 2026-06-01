@@ -7,6 +7,8 @@ import { triggerFailover, restoreRouting, getRoutingTable } from '../services/os
 import { injectNoise, removeNoise, getEmiState } from '../services/emiService.js';
 import { triggerDdos, resetSecurity, getSecurityState } from '../services/securityService.js';
 
+import { triggerLinkCut, restoreLinkCut, getLinkCutState } from '../services/linkCutService.js';
+
 export const simulateWanFailure = asyncHandler(async (req, res) => {
   const result = triggerFailover();
   req.app.get('io')?.emit('wan-status-changed', result);
@@ -49,13 +51,25 @@ export const simulateDdosAttack = asyncHandler(async (req, res) => {
   res.json({ success: true, data: result });
 });
 
+export const simulateLinkCut = asyncHandler(async (req, res) => {
+  const result = triggerLinkCut();
+  req.app.get('io')?.emit('link-cut-changed', result);
+  req.app.get('io')?.emit('log-event', {
+    type: 'danger',
+    message: '[CORTE FÍSICO] Falla catastrófica de fibra en Central Tarata. Enlaces caídos.'
+  });
+  res.json({ success: true, data: result });
+});
+
 export const restoreAll = asyncHandler(async (req, res) => {
   const routing = restoreRouting();
   removeNoise();
   const security = resetSecurity();
+  const linkCut = restoreLinkCut();
   req.app.get('io')?.emit('wan-status-changed', routing);
   req.app.get('io')?.emit('emi-status-changed', { active: false });
   req.app.get('io')?.emit('security-alert', security);
+  req.app.get('io')?.emit('link-cut-changed', linkCut);
   req.app.get('io')?.emit('log-event', {
     type: 'system',
     message: '[SISTEMA] Restauración global completada. Todos los servicios operativos.'

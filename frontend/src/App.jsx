@@ -9,6 +9,8 @@ import SimulationControls from './components/SimulationControls/SimulationContro
 import AlertsLog from './components/AlertsLog/AlertsLog';
 import LatencyChart from './components/Charts/LatencyChart';
 import TrafficChart from './components/Charts/TrafficChart';
+import BandwidthChart from './components/Charts/BandwidthChart';
+import TopologyMap from './components/TopologyMap/TopologyMap';
 import { useSocket } from './hooks/useSocket';
 import { useBranches } from './hooks/useBranches';
 import { useSimulation } from './hooks/useSimulation';
@@ -16,7 +18,7 @@ import { useSimulation } from './hooks/useSimulation';
 export default function App() {
   const { connected, signalData, logs, selectBranch: socketSelect, addLog } = useSocket();
   const { branches, allBranches, selectedId, selectBranch, filter, setFilter } = useBranches(socketSelect);
-  const { triggerWan, triggerEmi, triggerDdos, restore } = useSimulation(addLog);
+  const { triggerWan, triggerEmi, triggerDdos, triggerLinkCut, restore, isRestoring } = useSimulation(addLog);
 
   const selectedBranch = allBranches.find(b => b.id === selectedId);
 
@@ -35,7 +37,13 @@ export default function App() {
         
         <SignalPanel signalData={signalData} branch={selectedBranch} />
         <Oscilloscope signalData={signalData} />
-        <LatencyChart latencyHistory={signalData?.latencyHistory} />
+        <TopologyMap wanLinks={signalData?.wanLinks} ddosActive={signalData?.security?.ddosActive} linkCutActive={signalData?.linkCutActive} />
+        
+        {/* Gráficos en paralelo para balancear el UI y dar realismo temporal */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--smat-space-4)' }}>
+          <LatencyChart latencyHistory={signalData?.latencyHistory} />
+          <BandwidthChart bandwidthHistory={signalData?.bandwidthHistory} />
+        </div>
         
         <div style={{ marginTop: 'auto' }}>
           <AlertsLog logs={logs} />
@@ -48,10 +56,17 @@ export default function App() {
           <WanStatus wanLinks={signalData?.wanLinks} />
         </div>
         <div className="panel" style={{ padding: 'var(--smat-space-4)' }}>
-          <SecurityPanel security={signalData?.security} />
+          <SecurityPanel security={signalData?.security} linkCutActive={signalData?.linkCutActive} />
         </div>
         <div className="panel" style={{ padding: 'var(--smat-space-4)' }}>
-          <SimulationControls onWanFailure={triggerWan} onEmiNoise={triggerEmi} onDdosAttack={triggerDdos} onRestore={restore} />
+          <SimulationControls 
+            onWanFailure={triggerWan} 
+            onEmiNoise={triggerEmi} 
+            onDdosAttack={triggerDdos} 
+            onLinkCut={triggerLinkCut}
+            onRestore={restore} 
+            isRestoring={isRestoring}
+          />
         </div>
         <TrafficChart trafficData={signalData?.trafficDistribution} />
       </aside>

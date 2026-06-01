@@ -1,7 +1,9 @@
-import { useCallback } from 'react';
-import { simulateWanFailure, simulateEmiNoise, simulateDdosAttack, restoreAll } from '../services/api';
+import { useCallback, useState } from 'react';
+import { simulateWanFailure, simulateEmiNoise, simulateDdosAttack, simulateLinkCut, restoreAll } from '../services/api';
 
 export const useSimulation = (addLog) => {
+  const [isRestoring, setIsRestoring] = useState(false);
+
   const triggerWan = useCallback(async () => {
     addLog?.('danger', '[FALLA WAN] Simulando corte físico del enlace COMTECO...');
     await simulateWanFailure();
@@ -17,10 +19,23 @@ export const useSimulation = (addLog) => {
     await simulateDdosAttack();
   }, [addLog]);
 
-  const restore = useCallback(async () => {
-    addLog?.('system', '[SISTEMA] Restaurando todos los servicios...');
-    await restoreAll();
+  const triggerLinkCut = useCallback(async () => {
+    addLog?.('danger', '[CORTE FÍSICO] Falla catastrófica de fibra en Central Tarata. Enlaces caídos.');
+    await simulateLinkCut();
   }, [addLog]);
 
-  return { triggerWan, triggerEmi, triggerDdos, restore };
+  const restore = useCallback(async () => {
+    addLog?.('system', '[SISTEMA] Iniciando sincronización de hardware y restauración...');
+    setIsRestoring(true);
+    
+    // El tribunal pidió realismo: simular 3 segundos de "arranque" del switch
+    setTimeout(async () => {
+      await restoreAll();
+      setIsRestoring(false);
+      addLog?.('success', '[SISTEMA] Enlace físico levantado y hardware sincronizado con éxito.');
+    }, 3000);
+    
+  }, [addLog]);
+
+  return { triggerWan, triggerEmi, triggerDdos, triggerLinkCut, restore, isRestoring };
 };

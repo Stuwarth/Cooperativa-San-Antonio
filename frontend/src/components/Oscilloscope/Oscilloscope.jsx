@@ -46,34 +46,62 @@ export default function Oscilloscope({ signalData }) {
       const emi = signalData?.emi?.active;
       const emiNoiseLevel = signalData?.emi?.noiseLevel || 0;
       const ddos = signalData?.security?.ddosActive;
-      const amplitude = canvas.height * (emi ? 0.16 : 0.22);
-      const freq = emi ? 0.024 : 0.018;
+      const linkCut = signalData?.linkCutActive;
+      const wanFailed = signalData?.wanLinks?.find(l => l.id === 'comteco')?.status === 'failed';
       
-      const noise = emi ? (emiNoiseLevel * 0.7) : (ddos ? 9 : 0);
+      // Amplitud base
+      let amplitude = canvas.height * 0.22;
+      // Frecuencia base (PAM-5 normal)
+      let freq = 0.018;
+      let noise = 0;
       
-      // Semantic colors
-      // Normal: Teal #00a8a8 approx
-      // EMI: Amber #d19a30 approx
-      // DDoS: Coral #cf5c42 approx
-      let color = '#00a8a8'; 
-      if (ddos) color = '#cf5c42';
-      if (emi) color = '#d19a30';
+      // Colores semánticos
+      let color = '#00a8a8'; // Normal (Teal)
+
+      if (linkCut) {
+        amplitude = 0; // Flatline 0V
+        freq = 0;
+        color = '#cf5c42'; // Rojo muerto
+      } else if (ddos) {
+        // DDoS: Saturación de canal. Frecuencia altísima, señal super comprimida
+        freq = 0.065; 
+        amplitude = canvas.height * 0.25;
+        color = '#cf5c42'; // Rojo peligro
+        noise = 3; // Jitter de saturación de búfer
+      } else if (emi) {
+        // EMI: Atenuación de amplitud y ruido Gaussiano pesado
+        amplitude = canvas.height * 0.14; 
+        freq = 0.024;
+        color = '#d19a30'; // Ámbar advertencia
+        noise = emiNoiseLevel * 1.2; // Mucho ruido analógico
+      } else if (wanFailed) {
+        // Fallo WAN (Respaldo ADSL ENTEL): Señal más ruidosa y atenuada que la principal
+        amplitude = canvas.height * 0.18;
+        freq = 0.020;
+        color = '#8b5cf6'; // Morado para indicar enlace secundario (ENTEL)
+        noise = 4; // Ruido base de ADSL vs HFC
+      }
 
       ctx.beginPath(); 
       ctx.lineWidth = 1.5; 
       ctx.strokeStyle = color; 
-      ctx.shadowBlur = 8; 
+      ctx.shadowBlur = linkCut ? 2 : 8; 
       ctx.shadowColor = color;
       
       for (let x = 0; x < canvas.width; x++) {
+        // Base sine wave
         const raw = Math.sin(x * freq + phaseRef.current);
-        const pam = Math.round(raw * 2) / 2; // PAM-5 digital signaling levels
+        
+        // PAM-5 digital signaling levels (-2, -1, 0, 1, 2)
+        const pam = Math.round(raw * 2) / 2; 
         
         let n = 0;
         if (noise > 0) {
-          const u1 = Math.random(), u2 = Math.random();
+          // Generador de ruido Gaussiano (Box-Muller) para física realista
+          const u1 = Math.max(Number.MIN_VALUE, Math.random());
+          const u2 = Math.random();
           const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
-          n = z0 * (noise * 0.45); 
+          n = z0 * (noise * 0.6); 
         }
 
         const y = (canvas.height / 2) + (pam * amplitude) + n;
@@ -91,7 +119,7 @@ export default function Oscilloscope({ signalData }) {
       cancelAnimationFrame(animId); 
       window.removeEventListener('resize', resize); 
     };
-  }, [signalData?.emi?.active, signalData?.emi?.noiseLevel, signalData?.security?.ddosActive]);
+  }, [signalData?.emi?.active, signalData?.emi?.noiseLevel, signalData?.security?.ddosActive, signalData?.linkCutActive]);
 
   return (
     <div className="panel">

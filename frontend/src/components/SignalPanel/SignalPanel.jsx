@@ -34,6 +34,20 @@ export default function SignalPanel({ signalData, branch }) {
       desc: '68% veloc. luz', 
       state: 'normal' 
     },
+    { 
+      label: 'Diafonía (NEXT)', 
+      value: formatNumber(signalData.next || 45.00), 
+      unit: 'dB', 
+      desc: emiActive ? 'Acoplamiento Crítico' : 'Aislamiento UTP 6', 
+      state: emiActive ? 'danger' : 'normal' 
+    },
+    { 
+      label: 'Tráfico en Vivo', 
+      value: formatNumber(signalData.bandwidth || 0), 
+      unit: 'Mbps', 
+      desc: ddosActive ? 'Saturación Gigabit' : 'Flujo transaccional', 
+      state: ddosActive ? 'danger' : 'normal' 
+    },
   ];
 
   return (

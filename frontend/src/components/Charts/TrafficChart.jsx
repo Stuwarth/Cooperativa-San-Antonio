@@ -4,17 +4,18 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip } fro
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip);
 
 export default function TrafficChart({ trafficData }) {
-  const td = trafficData || {};
+  const td = trafficData || { vlan10: 0, vlan20: 0, vlan30: 0, vlan40: 0, vlan50: 0, vlan90: 0 };
   const values = [
-    td.vlan10 || 35, 
-    td.vlan20 || 20, 
-    td.vlan30 || 10, 
-    td.vlan40 || 15, 
-    td.vlan50 || 8, 
-    td.vlan90 || 12
+    td.vlan10 || 0, 
+    td.vlan20 || 0, 
+    td.vlan30 || 0, 
+    td.vlan40 || 0, 
+    td.vlan50 || 0, 
+    td.vlan90 || 0
   ];
   
   const labels = ['VLAN10', 'VLAN20', 'VLAN30', 'VLAN40', 'VLAN50', 'VLAN90'];
+  const isDdos = (td.vlan10 || 0) > 90;
 
   const data = {
     labels: labels,
@@ -22,20 +23,20 @@ export default function TrafficChart({ trafficData }) {
       label: 'Tráfico (%)',
       data: values,
       backgroundColor: [
-        'rgba(0, 168, 168, 0.2)', // Teal
-        'rgba(255, 255, 255, 0.1)',
-        'rgba(255, 255, 255, 0.1)',
-        'rgba(255, 255, 255, 0.1)',
-        'rgba(255, 255, 255, 0.1)',
+        isDdos ? 'rgba(239, 68, 68, 0.25)' : 'rgba(0, 168, 168, 0.2)', // Rojo en DDoS, Teal normal
         'rgba(255, 255, 255, 0.05)',
+        'rgba(255, 255, 255, 0.05)',
+        'rgba(255, 255, 255, 0.05)',
+        'rgba(255, 255, 255, 0.05)',
+        'rgba(255, 255, 255, 0.02)',
       ],
       borderColor: [
-        '#00a8a8',
-        '#8c8c8c',
-        '#8c8c8c',
-        '#8c8c8c',
-        '#8c8c8c',
-        '#5c5c5c',
+        isDdos ? '#ef4444' : '#00a8a8',
+        '#444444',
+        '#444444',
+        '#444444',
+        '#444444',
+        '#2a2a2a',
       ],
       borderWidth: 1,
       borderRadius: 2,
@@ -60,7 +61,7 @@ export default function TrafficChart({ trafficData }) {
           font: { size: 9, family: 'Roboto Mono' } 
         }, 
         grid: { color: 'rgba(255,255,255,0.05)' }, 
-        max: 60 
+        max: 100 
       }
     },
     plugins: { 
