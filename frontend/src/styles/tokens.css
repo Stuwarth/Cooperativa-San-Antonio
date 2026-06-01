@@ -1,0 +1,65 @@
+:root {
+  /* Surfaces - Neutral dark greys, no artificial warmth */
+  --smat-surface-base: oklch(18% 0 0);
+  --smat-surface-raised: oklch(22% 0 0);
+  --smat-surface-elevated: oklch(26% 0 0);
+  --smat-border: oklch(35% 0 0);
+  --smat-border-subtle: oklch(28% 0 0);
+  --smat-border-focus: oklch(65% 0.1 200);
+
+  /* Text - High contrast */
+  --smat-text-primary: oklch(95% 0 0);
+  --smat-text-secondary: oklch(75% 0 0); /* Passes 4.5:1 on base surface */
+  --smat-text-muted: oklch(60% 0 0);     /* Use only for disabled/faint text */
+
+  /* Semantic Palettes (Restrained but clear) */
+  /* Teal for normal/active state */
+  --smat-teal: oklch(65% 0.1 200);
+  --smat-teal-muted: oklch(65% 0.1 200 / 0.15);
+  
+  /* Amber for warning/degraded */
+  --smat-amber: oklch(75% 0.15 70);
+  --smat-amber-muted: oklch(75% 0.15 70 / 0.15);
+  
+  /* Coral for danger/failed */
+  --smat-coral: oklch(60% 0.18 25);
+  --smat-coral-muted: oklch(60% 0.18 25 / 0.15);
+
+  /* Info / Utility */
+  --smat-slate: oklch(55% 0.05 250);
+
+  /* Typography */
+  --smat-font-sans: "Albert Sans", system-ui, -apple-system, sans-serif;
+  --smat-font-mono: "Roboto Mono", "SFMono-Regular", Consolas, monospace;
+
+  /* Typographic Scale - Fixed scale for product UI (Ratio: 1.125) */
+  --smat-text-xs: 0.79rem;  /* ~12.6px */
+  --smat-text-sm: 0.88rem;  /* ~14.2px */
+  --smat-text-base: 1rem;   /* 16px */
+  --smat-text-md: 1.125rem; /* 18px */
+  --smat-text-lg: 1.26rem;  /* ~20.2px */
+  --smat-text-xl: 1.42rem;  /* ~22.7px */
+  --smat-text-2xl: 1.6rem;  /* 25.6px */
+
+  /* Spacing */
+  --smat-space-1: 4px;
+  --smat-space-2: 8px;
+  --smat-space-3: 12px;
+  --smat-space-4: 16px;
+  --smat-space-5: 24px;
+  --smat-space-6: 32px;
+
+  /* Shadows */
+  --smat-shadow-glow: 0 0 12px var(--smat-teal-muted);
+  --smat-shadow-glow-danger: 0 0 12px var(--smat-coral-muted);
+  --smat-shadow-panel: 0 4px 20px rgba(0,0,0,0.4);
+
+  /* Easing */
+  --smat-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --smat-transition-fast: 150ms var(--smat-ease-out);
+
+  /* Radii */
+  --smat-radius-sm: 4px;
+  --smat-radius-md: 6px;
+  --smat-radius-lg: 8px;
+}

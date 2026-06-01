@@ -1,0 +1,54 @@
+@import './tokens.css';
+@import './kit.css';
+
+:root {
+  font-family: var(--smat-font-sans);
+  color: var(--smat-text-primary);
+  background-color: var(--smat-surface-base);
+  line-height: 1.5;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--smat-surface-base);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  color: var(--smat-text-primary);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom Scrollbar - Professional dark mode */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--smat-surface-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--smat-border);
+  border-radius: var(--smat-radius-sm);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--smat-border-focus);
+}
+
+/* Utility text colors */
+.text-teal { color: var(--smat-teal); }
+.text-amber { color: var(--smat-amber); }
+.text-coral { color: var(--smat-coral); }
+.text-muted { color: var(--smat-text-secondary); }
+.text-faint { color: var(--smat-text-muted); }
+.text-mono { font-family: var(--smat-font-mono); }
