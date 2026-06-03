@@ -174,7 +174,7 @@ La **Cooperativa de Ahorro y Crédito San Antonio R.L.** es una entidad financie
 
 Proyecto Final de la materia **Análisis de Sistemas y Señales**  
 **Carrera:** Ingeniería de Sistemas — 9no Semestre  
-**Universidad Privada Boliviana (UPB)** — Cochabamba, Bolivia  
+**Universidad Privada Domingo Savio (UPDS)** — Cochabamba, Bolivia  
 **Año:** 2026
 
 ---
